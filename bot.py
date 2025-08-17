@@ -6,12 +6,18 @@ import re
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.types import ChatMemberUpdated
+from aiogram.client.bot import DefaultBotProperties
 from aiogram.filters.command import CommandStart
 from config import TOKEN, WELCOME_GIF_ID, BAD_WORDS
 
 # تنظیمات اولیه
 logging.basicConfig(level=logging.INFO)
-bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
+
+# ایجاد ربات با DefaultBotProperties برای parse_mode
+bot = Bot(
+    token=TOKEN,
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
+)
 dp = Dispatcher()
 
 # لیست پاسخ‌های سلام عامیانه
