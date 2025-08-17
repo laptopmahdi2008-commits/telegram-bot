@@ -2,10 +2,11 @@
 import asyncio
 import random
 import logging
+import re
 from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.types import ChatMemberUpdated
-from aiogram.filters import Text, CommandStart
+from aiogram.filters.command import CommandStart
 from config import TOKEN, WELCOME_GIF_ID, BAD_WORDS
 
 # تنظیمات اولیه
@@ -33,13 +34,13 @@ async def handle_messages(message: types.Message):
     if message.text:
         text = message.text.lower()
 
-        # پاسخ به سلام عامیانه
-        if "سلام" in text:
+        # بررسی سلام با Regex (حذف حساسیت به فاصله و علائم)
+        if re.search(r"سلام[^\w]*", text):
             await message.reply(random.choice(HELLO_RESPONSES), reply_to_message_id=message.message_id)
             return
 
-        # پاسخ به "سلام ربات"
-        if "سلام ربات" in text:
+        # بررسی "سلام ربات" با Regex
+        if re.search(r"سلام[^\w]*ربات", text):
             replies = [
                 "سلام مشتی، جخبر؟ 😎",
                 "درود بر داش مشتی! 🌟",
@@ -52,7 +53,7 @@ async def handle_messages(message: types.Message):
 
         # فیلتر ناسزا
         for word in BAD_WORDS:
-            if word in text:
+            if re.search(rf"\b{re.escape(word.lower())}\b", text):
                 await message.delete()
                 await message.answer(f"{message.from_user.mention_html()} مشتی بد بد حرف نزن 😡")
                 return
